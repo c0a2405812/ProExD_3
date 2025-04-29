@@ -176,11 +176,13 @@ class Explosion:
         爆発エフェクトSurfaceを生成
         表示時間を設定
         引数 bomb: 爆弾インスタンス
-        """
-        img0 = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
+        """ 
+        img0 = pg.transform.rotozoom(pg.image.load("fig/explosion.gif"), 0, 0.9)
         img = pg.transform.flip(img0, True, True)
         self.img_list = [img0, img]
-        self.rct = self.img.get_rect()
+        self.rct = self.img_list[0].get_rect()
+        self.rct.center = bomb.rct.center
+        self.rct = self.img_list[1].get_rect()
         self.rct.center = bomb.rct.center
         self.life = 10
 
@@ -189,11 +191,11 @@ class Explosion:
         爆発演出を行う
         引数 screen :画面のSurface
         """
-        while self.life > 0:
-            screen.blit(self.img_list[0], self.rct)
-            time.sleep(0.5)
-            screen.blit(self.img_list[1], self.rct)
-            time.sleep(0.5)
+        if self.life > 0:
+            if self.life%5 == 0:
+                screen.blit(self.img_list[0],self.rct)
+            else:
+                screen.blit(self.img_list[1], self.rct)
             self.life-=1
 
 def main():
@@ -207,6 +209,8 @@ def main():
     beams = []
     # Scoreインスタンス生成
     score = Score()
+    # Explosionインスタンス用の空リスト
+    explosions = []
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -239,6 +243,11 @@ def main():
                         bombs[j] = None  # 爆弾を消す
                         bird.change_img(6, screen)  # 喜びエフェクト
                         score.score+=1
+                        explosions.append(Explosion(bomb))  #爆弾インスタンス生成
+                        explosions = [explosion for explosion in explosions if explosion.life > 0]
+                        # 爆弾updateメソッド発動
+                        
+                        
                 bombs = [bomb for bomb in bombs if bomb is not None]  # 打ち落とされていない爆弾のみのリスト作成
                 beams = [beam for beam in beams if beam is not None]  # 消えていないビームのみのリスト作成
 
@@ -254,6 +263,8 @@ def main():
         for bomb in bombs:     
             bomb.update(screen)
         score.update(screen)
+        for expl in explosions:
+            expl.update(screen)
         pg.display.update()
         tmr += 1
         clock.tick(50)
