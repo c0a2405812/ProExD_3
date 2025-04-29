@@ -155,15 +155,14 @@ class Score:
         self.rct: pg.Rect = self.img.get_rect()
         self.rct.center = (100,600)
 
-    def update(self, point: int, screen: pg.Surface):
+    def update(self,screen: pg.Surface):
         """
         爆弾が打ち落とされた際にスコアを更新する
         引数1 point :スコア数
         引数2 screen :画面Surface
         """
-        self.score += 1
         self.fonto = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
-        self.img = self.fonto.render(f"スコア：{self.point}", 0, (0, 0, 255))
+        self.img = self.fonto.render(f"スコア：{self.score}", 0, (0, 0, 255))
         # self.rct: pg.Rect = self.img.get_rect()
         # self.rct.center = (100,600)
         screen.blit(self.img, self.rct)
@@ -174,9 +173,10 @@ def main():
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
     bg_img = pg.image.load("fig/pg_bg.jpg")
     bird = Bird((300, 200))
-    # bomb = Bomb((255, 0, 0), 10)
     bombs = [Bomb((255, 0, 0), 10) for _ in range(NUM_OF_BOMBS)]
     beam = None
+    # Scoreインスタンス生成
+    score = Score()
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -206,6 +206,7 @@ def main():
                     beam = None  # ビームを消す
                     bombs[j] = None  # 爆弾を消す
                     bird.change_img(6, screen)  # 喜びエフェクト
+                    score.score+=1
             bombs = [bomb for bomb in bombs if bomb is not None]  # 打ち落とされていない爆弾のみのリスト作成
         
         key_lst = pg.key.get_pressed()
@@ -214,6 +215,7 @@ def main():
             beam.update(screen)  
         for bomb in bombs:     
             bomb.update(screen)
+        score.update(screen)
         pg.display.update()
         tmr += 1
         clock.tick(50)
