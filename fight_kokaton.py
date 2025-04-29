@@ -166,6 +166,35 @@ class Score:
         screen.blit(self.img, self.rct)
 
 
+class Explosion:
+    """
+    爆発エフェクトについてのクラス
+    """
+
+    def __init__(self, bomb :Bomb):
+        """
+        爆発エフェクトSurfaceを生成
+        表示時間を設定
+        引数 bomb: 爆弾インスタンス
+        """
+        img0 = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
+        img = pg.transform.flip(img0, True, True)
+        self.img_list = [img0, img]
+        self.rct = self.img.get_rect()
+        self.rct.center = bomb.rct.center
+        self.life = 10
+
+    def update(self, screen :pg.Surface):
+        """
+        爆発演出を行う
+        引数 screen :画面のSurface
+        """
+        while self.life > 0:
+            screen.blit(self.img_list[0], self.rct)
+            time.sleep(0.5)
+            screen.blit(self.img_list[1], self.rct)
+            time.sleep(0.5)
+            self.life-=1
 
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
