@@ -151,8 +151,8 @@ class Score:
         引数なし
         """
         self.fonto = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
-        self.img = self.fonto.render(f"スコア：0", 0, (0, 0, 255))
         self.score = 0
+        self.img = self.fonto.render(f"スコア：{self.score}", 0, (0, 0, 255))
         self.rct: pg.Rect = self.img.get_rect()
         self.rct.center = (100,600)
 
